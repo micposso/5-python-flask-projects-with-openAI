@@ -1,0 +1,49 @@
+# Python
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/__pycache__/
+**/*.env
+*.env
+
+# Flask
+**/instance/
+**/*.db
+**/*.sqlite3
+
+# React
+**/node_modules/
+**/build/
+**/dist/
+
+# General
+**/.DS_Store
+**/.vscode/
+**/.idea/
+**/*.log
+**/*.bak
+**/*.swp
+**/*.tmp
+**/*.temp
+**/*.pid
+**/*.seed
+**/*.pid.lock
+**/*.coverage
+**/.cache
+**/*.pkl
+**/*.gz
+**/*.zip
+**/*.tar
+**/*.tar.gz
+**/*.rar
+**/*.7z
+**/*.old
+**/*.orig
+**/*.rej
+**/*.swo
+**/*.swn
+**/*.swm
+
+# OS generated files
+**/ehthumbs.db
+**/Thumbs.db
