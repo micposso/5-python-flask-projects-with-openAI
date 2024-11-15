@@ -16,6 +16,18 @@ def create_app():
     def index():
         return render_template('index.html')
 
+    @app.route('/answer', methods=['POST', 'GET'])
+    def answer():
+        if request.method == 'POST':
+            question = request.form['question']
+            answer = OpenAI.Completion.create(
+                engine="davinci",
+                prompt=question,
+                max_tokens=100
+            )
+            return jsonify({'answer': answer.choices[0].text})
+        return render_template('index.html')
+
     return app
 
 if __name__ == '__main__':
