@@ -6,11 +6,12 @@ import os
 
 load_dotenv()
 
+
 def create_app():
     app = Flask(__name__)
-    app.config['API_KEY'] = os.getenv('API_KEY')
-
-    OpenAI.api_key = app.config['API_KEY']
+    api_key = os.getenv('API_KEY')
+    client = OpenAI(api_key=api_key)
+    app.config['API_KEY'] = api_key
 
     @app.route('/')
     def index():
@@ -18,15 +19,17 @@ def create_app():
 
     @app.route('/answer', methods=['POST', 'GET'])
     def answer():
-        if request.method == 'POST':
-            question = request.form['question']
-            answer = OpenAI.Completion.create(
-                engine="davinci",
-                prompt=question,
-                max_tokens=100
+        def generate():
+            stream = client.chat.completions.create(
+                model="gpt-4",
+                messages=[{"role": "user", "content": "You are a helpful assistant."}],
+                stream=True,
             )
-            return jsonify({'answer': answer.choices[0].text})
-        return render_template('index.html')
+            for chunk in stream:
+                if chunk.choices[0].delta.content is not None:
+                    yield(chunk.choices[0].delta.content)
+
+        return generate(), {'Content-Type': 'text/plain'}
 
     return app
 
