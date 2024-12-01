@@ -1,6 +1,7 @@
 import './App.css'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { Container, TextField, Typography } from '@mui/material';
 
 
 function App() {
@@ -10,7 +11,6 @@ function App() {
   useEffect(() => {
     axios.get('http://localhost:5000/answer')
       .then((response) => {
-        console.log("API Response:", response);
         setData(response.data);
         setLoading(false);
       })
@@ -23,22 +23,22 @@ function App() {
     return <p>Loading...</p>;
   }
 
-    if (!data) {
-      return <p>No data available</p>;
-    }
+  if (!data) {
+    return <p>No data available</p>;
+  }
+      
+  console.log("DATA from component:", data);
+      
 
 
   return (
-    <>
-      <h1>OpenAI Streaming</h1>
-      <p>{data.message}</p>
-      <ul>
-        {data.data.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
-    </>
-  )
+    <Container fixed>
+      <Typography variant="h1" component="h2">
+        OpenAI Streaming
+      </Typography>
+      <TextField id="outlined-basic" label="Enter Text" variant="outlined" sx={{ width: '100%', mt: 3 }} />
+    </Container>
+  );
 }
 
 export default App
