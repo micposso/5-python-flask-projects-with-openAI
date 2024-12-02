@@ -22,16 +22,18 @@ def create_app():
 
     @app.route('/answer', methods=['POST', 'GET'])
     def answer():
-        def generate():
+        if request.method == 'POST':
+            user_input = request.json.get['text']
+            def generate():
             # Stream response from OpenAI API
-            stream = client.chat.completions.create(
-                model="gpt-4",
-                messages=[{"role": "user", "content": "What is Django in python?"}],
-                stream=True,
-            )
-            for chunk in stream:
-                if chunk.choices[0].delta.content is not None:
-                    yield(chunk.choices[0].delta.content)   
+                stream = client.chat.completions.create(
+                    model="gpt-4",
+                    messages=[{"role": "user", "content": user_input}],
+                    stream=True,
+                )
+                for chunk in stream:
+                    if chunk.choices[0].delta.content is not None:
+                        yield(chunk.choices[0].delta.content)   
 
         # Return a streaming response
         return Response(generate(), content_type='text/plain', headers={
