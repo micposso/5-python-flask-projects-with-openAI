@@ -8,6 +8,24 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [inputText, setInputText] = useState("");
 
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/answer")
+      .then((response) => {
+        console.log("API Response:", response.data);
+        setData(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputText(event.target.value);
+  };
+
   const handleSubmit = () => {
     setLoading(true);
     fetch("http://localhost:5000/answer", {
@@ -29,20 +47,6 @@ function App() {
       });
   };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputText(event.target.value);
-  };
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (!data) {
-    return <p>No data available</p>;
-  }
-
-  console.log("DATA from component:", data);
-
   return (
     <Container fixed>
       <Typography variant="h1" component="h2">
@@ -59,9 +63,15 @@ function App() {
       <Button variant="contained" color="primary" onClick={handleSubmit}>
         Submit
       </Button>
-      <Typography variant="body1" component="p">
-        {data}
-      </Typography>
+      {loading ? (
+        <Typography variant="h4" component="h2">
+          Loading...
+        </Typography>
+      ) : (
+        <Typography variant="h4" component="h2">
+          {data}
+        </Typography>
+      )}
     </Container>
   );
 }
