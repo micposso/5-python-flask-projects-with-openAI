@@ -4,7 +4,7 @@ import axios from "axios";
 import { Container, TextField, Typography, Button } from "@mui/material";
 
 function App() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [inputText, setInputText] = useState("");
 
@@ -26,25 +26,44 @@ function App() {
     setInputText(event.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setLoading(true);
-    fetch("http://localhost:5000/answer", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text: inputText }),
-    })
-      .then((response) => response.text())
-      .then((result) => {
-        console.log("API Response:", result);
-        setData(result);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching data: ", error);
-        setLoading(false);
+    setData(""); // Clear previous data
+
+    try {
+      const response = await fetch("http://localhost:5000/answer", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: inputText }),
       });
+
+      if (!response.body) {
+        throw new Error("No response body");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let result = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        // Decode the chunk and append it to the result
+        const chunk = decoder.decode(value, { stream: true });
+        result += chunk;
+
+        // Update the state to show the response incrementally
+        setData((prevData) => prevData + chunk);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
   };
 
   return (
