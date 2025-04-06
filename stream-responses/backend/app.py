@@ -23,7 +23,7 @@ def create_app():
     @app.route('/answer', methods=['POST', 'GET'])
     def answer():
         if request.method == 'POST':
-            user_input = request.json.get['text']
+            user_input = request.json.get('text')
             def generate():
             # Stream response from OpenAI API
                 stream = client.chat.completions.create(
